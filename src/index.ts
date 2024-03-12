@@ -1,15 +1,31 @@
 import express from 'express'
+import cors from 'cors'
+import dotenv from 'dotenv'
 
+import corsOptions from './config/cors'
+import connectDB from './config/database'
+import userRoutes from './routes/userRoutes'
+
+// Load environment variables
+dotenv.config()
+
+// Create an Express app
 const app = express()
 
-app.use(express.json()) // for parsing application/json
+// Middleware
+app.use(cors(corsOptions))
+app.use(express.json()) // Processes JSON data
 
-app.get('/', (_req, res) => {
-	res.send('Hello World')
-})
+// Connect to the database
+connectDB()
 
-const PORT = process.env.PORT || 3000
+// Routing
+app.use('/api/users', userRoutes)
 
+// Define the port
+const PORT = process.env.PORT
+
+// Start the server
 app.listen(PORT, () => {
-	console.log('Server is running on port 3000')
+	console.log(`Server is running on port: ${PORT}`)
 })
