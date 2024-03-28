@@ -8,7 +8,6 @@ const register = async (req: Request, res: Response) => {
 	const { email } = req.body
 	const existingUser: UserDocument | null = await User.findOne({ email: email })
 	if (existingUser) {
-		console.log('Status:', 4000)
 		return res.status(400).json({ msg: 'User already registered' })
 	}
 
@@ -26,7 +25,9 @@ const register = async (req: Request, res: Response) => {
 			msg: 'User created successfully',
 		})
 	} catch (error) {
-		console.log(error)
+		if (error instanceof Error) {
+			return res.status(400).json(error.message)
+		}
 	}
 }
 
@@ -47,9 +48,10 @@ const authenticate = async (req: Request, res: Response) => {
 			name: user.name,
 			email: user.email,
 			token: generateJWT(user._id),
+			msg: 'User authenticated successfully',
 		})
 	} else {
-		res.status(403).json({ msg: 'Incorrect password' })
+		return res.status(403).json({ msg: 'Incorrect password' })
 	}
 }
 
@@ -65,7 +67,9 @@ const confirm = async (req: Request, res: Response) => {
 		await userToConfirm.save()
 		res.json({ msg: 'User confirmed successfully' })
 	} catch (error) {
-		console.log(error)
+		if (error instanceof Error) {
+			return res.status(400).json(error.message)
+		}
 	}
 }
 
@@ -86,7 +90,9 @@ const forgotPassword = async (req: Request, res: Response) => {
 		})
 		res.json({ msg: 'We have sent an email with instructions' })
 	} catch (error) {
-		console.log(error)
+		if (error instanceof Error) {
+			return res.status(400).json(error.message)
+		}
 	}
 }
 
@@ -97,7 +103,7 @@ const checkToken = async (req: Request, res: Response) => {
 	if (validToken) {
 		res.json({ msg: 'Token is valid and user exists' })
 	} else {
-		res.status(404).json({ msg: 'Invalid token' })
+		return res.status(404).json({ msg: 'Invalid token' })
 	}
 }
 
@@ -114,7 +120,9 @@ const newPassword = async (req: Request, res: Response) => {
 			await user.save()
 			res.json({ msg: 'Password has been changed successfully' })
 		} catch (error) {
-			console.log(error)
+			if (error instanceof Error) {
+				return res.status(400).json(error.message)
+			}
 		}
 	} else {
 		res.status(404).json({ msg: 'Invalid token' })
