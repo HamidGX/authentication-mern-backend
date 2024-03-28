@@ -57,7 +57,7 @@ export const forgotPasswordEmail = async (datos: EmailRegistro) => {
 		html: `<p>Hello ${name},</p>
            <p>You have requested to reset your password.</p>
            <p>Follow the link below to generate a new password:</p>
-           <a href="${process.env.FRONTEND_URL}/reset-password/${token}">Reset Password</a>
+           <a href="${process.env.FRONTEND_URL}/forgot-password/${token}">Reset Password</a>
            <p>If you didn't request to reset your password, you can ignore this message.</p>
     `,
 	})
